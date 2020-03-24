@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Lorem Ipsum",
+    "image": "https://images.pexels.com/photos/264787/pexels-photo-264787.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "size": 3,
+    "color": "Blue",
+    "price": 499.99,
+    "quantity": 1
+  },
+  {
+    "id": 2,
+    "name": "Lorem Ipsum",
+    "image": "https://images.pexels.com/photos/264917/pexels-photo-264917.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "size": 2,
+    "color": "Black",
+    "price": 299.99,
+    "quantity": 1
+  },
+  {
+    "id": 3,
+    "name": "Lorem Ipsum",
+    "image": "https://images.pexels.com/photos/744969/pexels-photo-744969.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "size": 6,
+    "color": "White",
+    "price": 399.99,
+    "quantity": 1
+  },
+  {
+    "id": 4,
+    "name": "Lorem Ipsum",
+    "image": "https://images.pexels.com/photos/1666069/pexels-photo-1666069.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "size": 5,
+    "color": "Red",
+    "price": 799.99,
+    "quantity": 1
+  },
+  {
+    "id": 5,
+    "name": "Lorem Ipsum",
+    "image": "https://images.pexels.com/photos/1661903/pexels-photo-1661903.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "size": 2,
+    "color": "Silver",
+    "price": 199.99,
+    "quantity": 1
+  }
+]

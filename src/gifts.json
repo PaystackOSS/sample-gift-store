@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Lorem Ipsum",
+    "image": "../assets/sample-gift.jpg",
+    "size": "M",
+    "color": "Red",
+    "price": 1499.99,
+    "quantity": 1
+  }
+]
