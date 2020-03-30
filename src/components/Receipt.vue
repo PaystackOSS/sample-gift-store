@@ -106,10 +106,14 @@ $gray: #F2F5F7;
     margin-bottom: 48px;
   }
 
+  .header {
+    margin-bottom: 50px;
+  }
+
   &__items {
     border-top: 1px dashed #ececec;
-    padding-top: 24px;
-    margin-bottom: 16px;
+    padding-top: 30px;
+    margin-bottom: 30px;
   }
 
   &__checkout {

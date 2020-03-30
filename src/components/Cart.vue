@@ -69,7 +69,7 @@ export default {
 <style lang="scss" scoped>
 .cart {
   .header {
-    margin-bottom: 48px;
+    margin-bottom: 50px;
   }
 }
 
