@@ -73,7 +73,11 @@ export default {
         amount: this.nairaToKobo(this.total)
       }
       const url = `${process.env.VUE_APP_API}/transaction/initialize`
-      axios.post(url, data)
+      axios.post(url, data, {
+        headers: {
+          'pstk-auto-gen': 'true'
+        }
+      })
         .then(function (response) {
           window.location.replace(response.data.data.authorization_url)
         }).catch(function (error) {
