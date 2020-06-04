@@ -80,9 +80,9 @@ export default {
       })
         .then(function (response) {
           window.location.replace(response.data.data.authorization_url)
-        }).catch(function (error) {
+        }).catch(function () {
           // handle error
-          // console.log('Error: ', error.response)
+          // error.response
         })
     },
     nairaToKobo (amount) {
