@@ -1,7 +1,7 @@
 # sample-gift-store
 A simple application that shows how to integrate Paystack into your VueJS app.
 
-You can view the (live demo)[https://doc-gift-store.netlify.app/] of the app.
+You can try out the [live demo](https://doc-gift-store.netlify.app/) of the app.
 
 
 ## Project setup
@@ -20,7 +20,7 @@ npm install
   - Layout: This sets base structure of the app using two columns. It holds the Cart and Receipt components.
   - Receipt: This contains a from for collecting the customer's detail. It also show the price breakdown of the user's fees
 - data: This contains a JSON file used to populate the Cart component
-- store: This is used to manage state across the Cart and Receipt component.
+- store: This is used to manage state across the Cart and Receipt component
 
 ## Start the app
 - Open terminal and run command:
