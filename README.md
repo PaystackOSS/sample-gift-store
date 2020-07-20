@@ -1,7 +1,7 @@
 # sample-gift-store
 A simple application that shows how to integrate Paystack into your VueJS app.
 
-You can try out the [live demo](https://doc-gift-store.netlify.app/) of the app.
+You can try out the <a href="https://doc-gift-store.netlify.app/" target="_blank">live demo</a> of the app.
 
 
 ## Project setup
