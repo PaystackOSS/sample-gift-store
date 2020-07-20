@@ -75,6 +75,7 @@ export default {
   },
   methods: {
     makePayment () {
+      this.loading = true
       const data = {
         email: this.email,
         amount: this.nairaToKobo(this.total)
@@ -91,6 +92,7 @@ export default {
         .then(res => {
           const paystack = new window.PaystackPop()
           paystack.resumeTransaction(res.data.access_code)
+          this.loading = false
           this.resetForm()
         })
         .catch(() => {
