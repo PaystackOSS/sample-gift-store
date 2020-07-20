@@ -32,13 +32,13 @@
       </div>
     </div>
     <div class="receipt__checkout">
-      <button :disabled="!isEmailValid" @click="makePayment">Checkout</button>
+      <button :disabled="!isEmailValid || loading" @click="makePayment">Checkout</button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -47,8 +47,15 @@ export default {
     return {
       email: '',
       address: '',
-      deliveryFee: 1000
+      deliveryFee: 1000,
+      loading: false
     }
+  },
+  mounted () {
+    const popup = document.createElement('script')
+    popup.setAttribute('src', 'https://js.paystack.co/v2/inline.js')
+    popup.async = true
+    document.head.appendChild(popup)
   },
   computed: {
     ...mapGetters('cart', {
@@ -73,17 +80,26 @@ export default {
         amount: this.nairaToKobo(this.total)
       }
       const url = `${process.env.VUE_APP_API}/transaction/initialize`
-      axios.post(url, data, {
+      fetch(url, {
+        method: 'POST',
         headers: {
-          'pstk-auto-gen': 'true'
-        }
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
       })
-        .then(function (response) {
-          window.location.replace(response.data.data.authorization_url)
-        }).catch(function () {
-          // handle error
-          // error.response
+        .then(response => response.json())
+        .then(res => {
+          const paystack = new window.PaystackPop()
+          paystack.resumeTransaction(res.data.access_code)
+          this.resetForm()
         })
+        .catch(() => {
+          // handle error here
+        })
+    },
+    resetForm () {
+      this.email = ''
+      this.address = ''
     },
     nairaToKobo (amount) {
       return (amount * 100).toFixed(0)
