@@ -51,10 +51,7 @@ export default {
     }
   },
   mounted () {
-    const popup = document.createElement('script')
-    popup.setAttribute('src', 'https://js.paystack.co/v2/inline.js')
-    popup.async = true
-    document.head.appendChild(popup)
+    // load inline.js
   },
   computed: {
     ...mapGetters('cart', {
@@ -74,29 +71,12 @@ export default {
   },
   methods: {
     makePayment () {
-      this.loading = true
-      const data = {
-        email: this.email,
-        amount: this.nairaToKobo(this.total)
-      }
-      const url = `${process.env.VUE_APP_API}/transaction/initialize`
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response => response.json())
-        .then(res => {
-          const paystack = new window.PaystackPop()
-          paystack.resumeTransaction(res.data.access_code)
-          this.loading = false
-          this.resetForm()
-        })
-        .catch(() => {
-          // handle error here
-        })
+      // TODO
+      // create request param
+      // -----
+      // create serverless function to initialize a transaction
+      // consume the serverless function
+      // continue transaction on popup
     },
     resetForm () {
       this.email = ''
