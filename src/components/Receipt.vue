@@ -32,33 +32,105 @@
       </div>
     </div>
     <div class="receipt__checkout">
-      <button :disabled="!isEmailValid || loading" @click="makePayment">Checkout</button>
+      <paystack
+      :disabled="!isEmailValid"
+        :amount="nairaToKobo(total)"
+        :email="email"
+        :paystackkey="paystackkey"
+        :reference="reference"
+        :callback="callback"
+        :close="close"
+        :metadata="giftsMetadata"
+        :split="splitConfig"
+        :embed="false"
+    >
+       <i class="fas fa-money-bill-alt"></i>
+       Checkout
+    </paystack>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-
+import paystack from 'vue-paystack'
+import uniqid from 'uniqid'
 export default {
   name: 'Receipt',
+  components: {
+    paystack
+  },
   data () {
     return {
       email: '',
       address: '',
       deliveryFee: 1000,
-      loading: false
+      orderComplete: false,
+      paystackkey: 'pk_test_7f6411a75841f54d5499e6199bac8e29e03033f9',
+      loading: false,
+      split_Config: {
+        type: 'flat',
+        bearer_type: 'account',
+        subaccounts: [
+          {
+            subaccount: 'ACCT_ekzhljz1lm6qmu1',
+            share: 6000
+          },
+          {
+            subaccount: 'ACCT_sv6roe394nkpu6j',
+            share: 4000
+          }
+        ]
+      }
     }
   },
-  mounted () {
-    const popup = document.createElement('script')
-    popup.setAttribute('src', 'https://js.paystack.co/v2/inline.js')
-    popup.async = true
-    document.head.appendChild(popup)
-  },
   computed: {
+    giftsMetadata () {
+      const metadata = { cart: this.gifts }
+      metadata.custom_fields = this.gifts.map(gift => {
+        return {
+          value: gift.quantity,
+          display_name: gift.name,
+          variable_name: gift.id
+        }
+      })
+      return metadata
+    },
+    splitConfig () {
+      const config = {
+        type: 'flat',
+        bearer_type: 'account',
+        subaccounts: []
+      }
+      const groupGiftsByVendor = {}
+      this.gifts.forEach(gift => {
+        if (groupGiftsByVendor[gift.vendor]) {
+          groupGiftsByVendor[gift.vendor].push(gift)
+        } else {
+          groupGiftsByVendor[gift.vendor] = [gift]
+        }
+      })
+      console.log(groupGiftsByVendor)
+      Object.keys(groupGiftsByVendor).forEach(vendor => {
+        const subaccount = {
+          subaccount: vendor,
+          share: 0
+        }
+        groupGiftsByVendor[vendor].forEach(gift => {
+          subaccount.share += this.nairaToKobo(0.9 * (gift.quantity * gift.price))
+        })
+        config.subaccounts.push(subaccount)
+      })
+      console.log(config)
+      return config
+    },
+
+    reference () {
+      return uniqid('ref-')
+    },
     ...mapGetters('cart', {
-      subtotal: 'cartTotalPrice'
+      subtotal: 'cartTotalPrice',
+      gifts: 'cartProducts'
     }),
     isEmailValid () {
       const regex = /\S+@\S+\.\S+/ // this is just a simple check
@@ -73,37 +145,40 @@ export default {
     }
   },
   methods: {
-    makePayment () {
-      this.loading = true
-      const data = {
-        email: this.email,
-        amount: this.nairaToKobo(this.total)
-      }
-      const url = `${process.env.VUE_APP_API}/transaction/initialize`
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response => response.json())
-        .then(res => {
-          const paystack = new window.PaystackPop()
-          paystack.resumeTransaction(res.data.access_code)
-          this.loading = false
-          this.resetForm()
-        })
-        .catch(() => {
-          // handle error here
-        })
+    callback (response) {
+      this.verifyTransaction(response.reference)
+    },
+    close () {
+      this.loading = false
     },
     resetForm () {
       this.email = ''
       this.address = ''
     },
+    verifyTransaction (reference) {
+      this.loading = true
+      const url = `https://api-middleware.paystackintegrations.com/transaction/verify/${reference}`
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(res => {
+          console.log(res.data)
+          if (res.data.status === 'success') {
+            this.$store.dispatch('cart/orderComplete', { email: this.email, address: this.address, cart: this.gifts })
+            this.$emit('ordercomplete', this.gifts)
+            this.resetForm()
+          }
+        })
+        .catch(() => {
+          // handle error here
+        })
+    },
     nairaToKobo (amount) {
-      return (amount * 100).toFixed(0)
+      return Number((amount * 100).toFixed(0))
     },
     parseCurrency (amount) {
       return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount)

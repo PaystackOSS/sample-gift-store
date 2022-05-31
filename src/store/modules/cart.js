@@ -8,6 +8,9 @@ const getters = {
   cartProducts: (state, getters) => {
     return state.gifts
   },
+  orderStatus: (state, getters) => {
+    return state.orderStatus
+  },
 
   cartTotalPrice: (state, getters) => {
     return getters.cartProducts.reduce((total, gift) => {
@@ -17,7 +20,10 @@ const getters = {
 }
 
 const mutations = {
-
+  orderStatus (state, order) {
+    state.orderStatus = 'success'
+    state.order = order
+  },
   incrementGiftQuantity (state, id) {
     const cartItem = state.gifts.find(gift => gift.id === id)
     cartItem.quantity++
@@ -31,9 +37,16 @@ const mutations = {
   }
 }
 
+const actions = {
+  orderComplete (state, order) {
+    state.commit('orderStatus', 'success')
+  }
+}
+
 export default {
   namespaced: true,
   state,
   getters,
-  mutations
+  mutations,
+  actions
 }
