@@ -16,7 +16,7 @@
         <div>Quantity</div>
         <div>Sub total</div>
       </div>
-      <div class="itemlist__body" v-for="(gift, index) in gifts" :key="index">
+      <div class="itemlist__body" v-for="(gift, index) in filterGifts" :key="index">
         <div class="item__content">
           <div class="item__image">
             <img :src="gift.image" />
@@ -60,7 +60,10 @@ export default {
   computed: {
     ...mapGetters('cart', {
       orderStatus: 'orderStatus'
-    })
+    }),
+    filterGifts () {
+      return this.gifts.filter(gift => gift.quantity > 0)
+    }
   },
   methods: {
     calculateUnitTotal (index) {

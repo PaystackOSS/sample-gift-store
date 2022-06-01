@@ -31,7 +31,7 @@ const mutations = {
 
   decrementGiftQuantity (state, id) {
     const cartItem = state.gifts.find(gift => gift.id === id)
-    if (cartItem.quantity > 1) {
+    if (cartItem.quantity > 0) {
       cartItem.quantity--
     }
   }

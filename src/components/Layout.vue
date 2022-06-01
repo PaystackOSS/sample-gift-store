@@ -29,7 +29,6 @@ export default {
   },
   methods: {
     orderComplete (data) {
-      console.log('dt', data)
       this.orderStatus = 'success'
       this.cart = data
     },

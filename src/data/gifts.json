@@ -6,8 +6,7 @@
     "size": 3,
     "color": "Blue",
     "price":3000,
-    "quantity": 1,
-    "vendor":"ACCT_ekzhljz1lm6qmu1"
+    "quantity": 0
   },
   {
     "id": 2,
@@ -16,8 +15,7 @@
     "size": 2,
     "color": "Black",
     "price": 5000,
-    "quantity": 1,
-    "vendor":"ACCT_7i76qpjh7rr6q3z"
+    "quantity": 0
   },
   {
     "id": 3,
@@ -26,8 +24,7 @@
     "size": 6,
     "color": "White",
     "price": 4500,
-    "quantity": 1,
-    "vendor":"ACCT_sv6roe394nkpu6j"
+    "quantity": 0
   },
   {
     "id": 4,
@@ -36,8 +33,7 @@
     "size": 5,
     "color": "Red",
     "price": 7500,
-    "quantity": 1,
-    "vendor":"ACCT_sv6roe394nkpu6j"
+    "quantity": 0
   },
   {
     "id": 5,
@@ -46,7 +42,6 @@
     "size": 2,
     "color": "Silver",
     "price": 7800,
-    "quantity": 1,
-    "vendor":"ACCT_sv6roe394nkpu6j"
+    "quantity": 0
   }
 ]
