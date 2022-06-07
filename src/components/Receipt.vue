@@ -32,21 +32,9 @@
       </div>
     </div>
     <div class="receipt__checkout">
-      <paystack
-      :disabled="!isEmailValid"
-        :amount="nairaToKobo(total)"
-        :email="email"
-        :paystackkey="paystackkey"
-        :reference="reference"
-        :callback="callback"
-        :close="close"
-        :metadata="giftsMetadata"
-        :split="splitConfig"
-        :embed="false"
-    >
-       <i class="fas fa-money-bill-alt"></i>
-       Checkout
-    </paystack>
+      <paystack :email="email" :reference="reference" :amount=" nairaToKobo(total)" :callback="callback" :close="close" :paystackkey="paystackkey" :metadata="giftsMetadata" :split="splitConfig" >
+
+      </paystack>
     </div>
   </div>
 </template>
@@ -60,6 +48,7 @@ export default {
   components: {
     paystack
   },
+
   data () {
     return {
       email: '',
@@ -68,34 +57,10 @@ export default {
       orderComplete: false,
       paystackkey: 'pk_test_7f6411a75841f54d5499e6199bac8e29e03033f9',
       loading: false,
-      split_Config: {
-        type: 'flat',
-        bearer_type: 'account',
-        subaccounts: [
-          {
-            subaccount: 'ACCT_ekzhljz1lm6qmu1',
-            share: 6000
-          },
-          {
-            subaccount: 'ACCT_sv6roe394nkpu6j',
-            share: 4000
-          }
-        ]
-      }
+      subaccount: 'ACCT_6kzw8efxenktnck'
     }
   },
   computed: {
-    giftsMetadata () {
-      const metadata = { cart: this.gifts }
-      metadata.custom_fields = this.gifts.map(gift => {
-        return {
-          value: gift.quantity,
-          display_name: gift.name,
-          variable_name: gift.id
-        }
-      })
-      return metadata
-    },
     splitConfig () {
       const config = {
         type: 'flat',
@@ -104,14 +69,12 @@ export default {
       }
       const groupGiftsByVendor = {}
       this.gifts.forEach(gift => {
-        if (groupGiftsByVendor[gift.vendor]) {
-          groupGiftsByVendor[gift.vendor].push(gift)
-        } else {
-          groupGiftsByVendor[gift.vendor] = [gift]
+        if (!groupGiftsByVendor[gift.vendor]) {
+          groupGiftsByVendor[gift.vendor] = []
         }
+        groupGiftsByVendor[gift.vendor].push(gift)
       })
-      console.log(groupGiftsByVendor)
-      Object.keys(groupGiftsByVendor).forEach(vendor => {
+      Object.keys(groupGiftsByVendor).forEach((vendor) => {
         const subaccount = {
           subaccount: vendor,
           share: 0
@@ -119,12 +82,29 @@ export default {
         groupGiftsByVendor[vendor].forEach(gift => {
           subaccount.share += this.nairaToKobo(0.9 * (gift.quantity * gift.price))
         })
-        config.subaccounts.push(subaccount)
+        if (subaccount.share > 0) {
+          config.subaccounts.push(subaccount)
+        }
       })
-      console.log(config)
       return config
     },
-
+    giftsMetadata () {
+      const metadata = {
+        gifts: this.gifts,
+        address: this.address,
+        custom_fields: []
+      }
+      metadata.custom_fields = this.gifts.map((gift) => {
+        if (gift.quantity > 0) {
+          return {
+            display_name: gift.name,
+            variable_name: gift.id,
+            value: gift.quantity
+          }
+        }
+      })
+      return metadata
+    },
     reference () {
       return uniqid('ref-')
     },
@@ -149,33 +129,38 @@ export default {
       this.verifyTransaction(response.reference)
     },
     close () {
-      this.loading = false
+      window.alert('Sad to see you go, come back later')
+    },
+    verifyTransaction () {
+      const orderData = {
+        reference: this.reference,
+        email: this.email,
+        address: this.address,
+        gifts: this.gifts
+      }
+      console.log(orderData)
+      const url = 'http://localhost:3000/order'
+      this.loading = true
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(orderData),
+        headers: {
+          'content-type': 'application/json'
+        }
+      }).then((response) => {
+        return response.json()
+      }).then((response) => {
+        console.log(response)
+        this.loading = false
+        if (response.order.status === 'paid') {
+          this.$emit('ordercomplete', this.gifts)
+          this.resetForm()
+        }
+      })
     },
     resetForm () {
       this.email = ''
       this.address = ''
-    },
-    verifyTransaction (reference) {
-      this.loading = true
-      const url = `https://api-middleware.paystackintegrations.com/transaction/verify/${reference}`
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json'
-        }
-      })
-        .then(response => response.json())
-        .then(res => {
-          console.log(res.data)
-          if (res.data.status === 'success') {
-            this.$store.dispatch('cart/orderComplete', { email: this.email, address: this.address, cart: this.gifts })
-            this.$emit('ordercomplete', this.gifts)
-            this.resetForm()
-          }
-        })
-        .catch(() => {
-          // handle error here
-        })
     },
     nairaToKobo (amount) {
       return Number((amount * 100).toFixed(0))
