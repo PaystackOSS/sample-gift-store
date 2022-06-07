@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="receipt__checkout">
-     <v-btn color="primary" @click="checkout">Checkout</v-btn>
+     <button color="primary">Checkout</button>
     </div>
   </div>
 </template>
