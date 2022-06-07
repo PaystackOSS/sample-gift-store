@@ -32,22 +32,16 @@
       </div>
     </div>
     <div class="receipt__checkout">
-      <paystack :email="email" :reference="reference" :amount=" nairaToKobo(total)" :callback="callback" :close="close" :paystackkey="paystackkey" :metadata="giftsMetadata" :split="splitConfig" >
-
-      </paystack>
+     <v-btn color="primary" @click="checkout">Checkout</v-btn>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import paystack from 'vue-paystack'
 import uniqid from 'uniqid'
 export default {
   name: 'Receipt',
-  components: {
-    paystack
-  },
 
   data () {
     return {
@@ -56,11 +50,11 @@ export default {
       deliveryFee: 1000,
       orderComplete: false,
       paystackkey: 'pk_test_7f6411a75841f54d5499e6199bac8e29e03033f9',
-      loading: false,
-      subaccount: 'ACCT_6kzw8efxenktnck'
+      loading: false
     }
   },
   computed: {
+
     splitConfig () {
       const config = {
         type: 'flat',
@@ -86,24 +80,8 @@ export default {
           config.subaccounts.push(subaccount)
         }
       })
+      console.log(config)
       return config
-    },
-    giftsMetadata () {
-      const metadata = {
-        gifts: this.gifts,
-        address: this.address,
-        custom_fields: []
-      }
-      metadata.custom_fields = this.gifts.map((gift) => {
-        if (gift.quantity > 0) {
-          return {
-            display_name: gift.name,
-            variable_name: gift.id,
-            value: gift.quantity
-          }
-        }
-      })
-      return metadata
     },
     reference () {
       return uniqid('ref-')
@@ -126,37 +104,10 @@ export default {
   },
   methods: {
     callback (response) {
-      this.verifyTransaction(response.reference)
+      window.alert('Thank you for your purchase, Have a heavenly day!')
     },
     close () {
       window.alert('Sad to see you go, come back later')
-    },
-    verifyTransaction () {
-      const orderData = {
-        reference: this.reference,
-        email: this.email,
-        address: this.address,
-        gifts: this.gifts
-      }
-      console.log(orderData)
-      const url = 'http://localhost:3000/order'
-      this.loading = true
-      fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(orderData),
-        headers: {
-          'content-type': 'application/json'
-        }
-      }).then((response) => {
-        return response.json()
-      }).then((response) => {
-        console.log(response)
-        this.loading = false
-        if (response.order.status === 'paid') {
-          this.$emit('ordercomplete', this.gifts)
-          this.resetForm()
-        }
-      })
     },
     resetForm () {
       this.email = ''
