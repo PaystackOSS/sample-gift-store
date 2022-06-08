@@ -1,0 +1,6 @@
+- Fully responsive gift store on web
+- Accept payments using popup checkout
+- After payment, customers should be redirected to a thank you page.
+- Admin should be able to view order details from backend
+- Admin should be able to cancel and refund an order from backend
+- Payments should be split 90/10 between vendor and platform ??
